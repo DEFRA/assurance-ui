@@ -24,3 +24,9 @@ export const aboutController = {
 /**
  * @import { ServerRoute } from '@hapi/hapi'
  */
+
+export function getAbout(request, h) {
+  return h.view('about/index', {
+    pageTitle: 'About'
+  })
+}

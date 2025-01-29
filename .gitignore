@@ -10,3 +10,8 @@ coverage
 .cache
 .envrc
 tsconfig.tsbuildinfo
+# Environment variables
+.env
+.env.local
+.env.*.local
+/src/config/production-data.js

@@ -1,0 +1,40 @@
+/* RAG Status Tags */
+.govuk-tag--red {
+  background-color: #d4351c;
+}
+
+.govuk-tag--amber {
+  background-color: #f47738;
+}
+
+.govuk-tag--green {
+  background-color: #00703c;
+}
+
+/* Button Navigation */
+.button-nav {
+  margin-bottom: 30px;
+}
+
+.button-nav .govuk-button {
+  margin-right: 15px;
+}
+
+.button-nav .govuk-button:last-child {
+  margin-right: 0;
+}
+
+/* Layout Spacing */
+.assessment-section {
+  margin-top: 30px;
+}
+
+.govuk-accordion__section-button .govuk-tag {
+  margin-left: 10px;
+}
+
+/* Statistics Section */
+#statistics-section .govuk-body {
+  font-size: 24px;
+  font-weight: bold;
+} 
