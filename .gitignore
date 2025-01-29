@@ -11,3 +11,7 @@ coverage
 .envrc
 tsconfig.tsbuildinfo
 /src/data
+# Environment variables
+.env
+.env.local
+.env.*.local
