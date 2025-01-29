@@ -1,21 +1,4 @@
-{% extends "template.njk" %}
-
-{% from "components/table/macro.njk" import govukTable %}
-{% from "components/tag/macro.njk" import govukTag %}
-{% from "components/header/macro.njk" import govukHeader %}
-
-{% block head %}
-  <link href="/govuk-frontend/dist/govuk/govuk-frontend.min.css" rel="stylesheet" />
-  <link href="{{ assetPath }}/stylesheets/application.css" rel="stylesheet" />
-{% endblock %}
-
-{% block header %}
-  {{ govukHeader({
-    homepageUrl: "/",
-    serviceName: "Technical Assurance Service",
-    serviceUrl: "/"
-  }) }}
-{% endblock %}
+{% extends "layout.njk" %}
 
 {% block pageTitle %}
   {{ pageTitle }} - Technical Assurance Service
@@ -32,34 +15,26 @@
             <th scope="col" class="govuk-table__header">Project name</th>
             <th scope="col" class="govuk-table__header">Overall status</th>
             <th scope="col" class="govuk-table__header">Commentary</th>
-            <th scope="col" class="govuk-table__header">Actions</th>
           </tr>
         </thead>
         <tbody class="govuk-table__body">
           {% for project in projects %}
             <tr class="govuk-table__row">
-              <td class="govuk-table__cell">{{ project.name }}</td>
+              <td class="govuk-table__cell">
+                <a href="/projects/{{ project.id }}" class="govuk-link">
+                  {{ project.name }}
+                </a>
+              </td>
               <td class="govuk-table__cell">
                 <strong class="govuk-tag govuk-tag--{{ project.overallStatus }}">
                   {{ project.overallStatus | upper }}
                 </strong>
               </td>
               <td class="govuk-table__cell">{{ project.commentary }}</td>
-              <td class="govuk-table__cell">
-                <a href="/projects/{{ project.id }}" class="govuk-link">View details</a>
-              </td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
     </main>
   </div>
-{% endblock %}
-
-{% block bodyEnd %}
-  <script type="module">
-    import { initAll } from '/govuk-frontend/dist/govuk/govuk-frontend-component.mjs'
-    initAll()
-  </script>
-  {% block pageScripts %}{% endblock %}
-{% endblock %}
+{% endblock %} 

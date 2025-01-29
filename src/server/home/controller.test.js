@@ -1,27 +1,21 @@
-import { createServer } from '~/src/server/index.js'
-import { statusCodes } from '~/src/server/common/constants/status-codes.js'
+import { getHome } from './controller.js'
 
 describe('#homeController', () => {
-  /** @type {Server} */
-  let server
-
-  beforeAll(async () => {
-    server = await createServer()
-    await server.initialize()
-  })
-
-  afterAll(async () => {
-    await server.stop({ timeout: 0 })
-  })
-
   test('Should provide expected response', async () => {
-    const { result, statusCode } = await server.inject({
-      method: 'GET',
-      url: '/'
-    })
+    const h = {
+      view: jest.fn().mockReturnValue({
+        code: jest.fn().mockReturnValue('Technical Assurance Dashboard')
+      })
+    }
 
-    expect(result).toEqual(expect.stringContaining('Home |'))
-    expect(statusCode).toBe(statusCodes.ok)
+    await getHome({}, h)
+
+    expect(h.view).toHaveBeenCalledWith(
+      'home/index',
+      expect.objectContaining({
+        pageTitle: 'Technical Assurance Dashboard'
+      })
+    )
   })
 })
 

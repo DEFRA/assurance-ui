@@ -1,0 +1,7 @@
+$govuk-assets-path: '/govuk/assets/';
+$govuk-images-path: '#{$govuk-assets-path}images/';
+$govuk-fonts-path: '#{$govuk-assets-path}fonts/';
+
+@import "govuk-frontend/dist/govuk/all";
+
+// Your custom styles below 

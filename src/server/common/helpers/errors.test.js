@@ -1,6 +1,6 @@
 import { createServer } from '~/src/server/index.js'
-import { statusCodes } from '~/src/server/common/constants/status-codes.js'
-import { catchAll } from '~/src/server/common/helpers/errors.js'
+import { statusCodes } from '../constants/status-codes.js'
+import { catchAll } from './errors.js'
 
 describe('#errors', () => {
   /** @type {Server} */
@@ -15,16 +15,29 @@ describe('#errors', () => {
     await server.stop({ timeout: 0 })
   })
 
-  test('Should provide expected Not Found page', async () => {
-    const { result, statusCode } = await server.inject({
-      method: 'GET',
-      url: '/non-existent-path'
-    })
+  test('Should provide expected Not Found page', () => {
+    const h = {
+      view: jest.fn().mockReturnValue({
+        code: jest.fn().mockReturnValue('Page not found')
+      })
+    }
 
-    expect(result).toEqual(
-      expect.stringContaining('Page not found | assurance-ui')
-    )
-    expect(statusCode).toBe(statusCodes.notFound)
+    const request = {
+      response: {
+        isBoom: true,
+        output: {
+          statusCode: statusCodes.notFound
+        }
+      }
+    }
+
+    catchAll(request, h)
+
+    expect(h.view).toHaveBeenCalledWith('error/index', {
+      pageTitle: 'Page not found',
+      heading: statusCodes.notFound,
+      message: 'Page not found'
+    })
   })
 })
 

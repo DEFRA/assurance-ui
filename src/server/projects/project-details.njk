@@ -1,0 +1,202 @@
+{% extends "template.njk" %}
+
+{% from "components/back-link/macro.njk" import govukBackLink %}
+{% from "components/button/macro.njk" import govukButton %}
+{% from "components/tag/macro.njk" import govukTag %}
+{% from "components/table/macro.njk" import govukTable %}
+{% from "components/header/macro.njk" import govukHeader %}
+
+{% block head %}
+  <link href="/govuk-frontend/dist/govuk/govuk-frontend.min.css" rel="stylesheet" />
+  <link href="{{ assetPath }}/stylesheets/application.css" rel="stylesheet" />
+{% endblock %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    serviceName: "Technical Assurance Service",
+    serviceUrl: "/"
+  }) }}
+{% endblock %}
+
+{% block pageTitle %}
+  {{ project.name }} - Technical Assurance Service
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back to dashboard",
+    href: "/"
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-width-container">
+    <main class="govuk-main-wrapper">
+      <h1 class="govuk-heading-xl">{{ project.name }}</h1>
+
+      {# Project Summary Section #}
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+          <h2 class="govuk-heading-l">Project Summary</h2>
+          <p class="govuk-body">
+            <span class="govuk-!-font-weight-bold">Overall Status:</span>
+            <strong class="govuk-tag govuk-tag--{{ project.overallStatus }} govuk-!-margin-left-1">
+              {{ project.overallStatus | upper }}
+            </strong>
+          </p>
+          <div class="govuk-inset-text">
+            {{ project.commentary | safe }}
+          </div>
+        </div>
+      </div>
+
+      {# Navigation Buttons #}
+      <div class="govuk-button-group govuk-!-margin-bottom-6">
+        {{ govukButton({
+          text: "Overview",
+          classes: "js-section-button govuk-!-margin-right-1",
+          attributes: {
+            "data-section": "overview"
+          }
+        }) }}
+        {{ govukButton({
+          text: "Detailed Assessment",
+          classes: "js-section-button govuk-!-margin-right-1",
+          attributes: {
+            "data-section": "detailed"
+          }
+        }) }}
+        {{ govukButton({
+          text: "Statistics",
+          classes: "js-section-button",
+          attributes: {
+            "data-section": "statistics"
+          }
+        }) }}
+      </div>
+
+      {# Overview Section #}
+      <div id="overview-section" class="assessment-section">
+        <table class="govuk-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">Standard</th>
+              <th scope="col" class="govuk-table__header">Status</th>
+              <th scope="col" class="govuk-table__header">Summary</th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            {% for standard in project.standards %}
+              <tr class="govuk-table__row">
+                <td class="govuk-table__cell">{{ standard.id }}. {{ standard.name }}</td>
+                <td class="govuk-table__cell">
+                  <strong class="govuk-tag govuk-tag--{{ standard.status }}">
+                    {{ standard.status | upper }}
+                  </strong>
+                </td>
+                <td class="govuk-table__cell">{{ standard.evidence }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      {# Detailed Assessment Section #}
+      <div id="detailed-section" class="assessment-section" hidden>
+        <div class="govuk-accordion" data-module="govuk-accordion">
+          {% for standard in project.standards %}
+            <div class="govuk-accordion__section">
+              <div class="govuk-accordion__section-header">
+                <h2 class="govuk-accordion__section-heading">
+                  <span class="govuk-accordion__section-button" id="accordion-heading-{{ standard.id }}">
+                    {{ standard.id }}. {{ standard.name }}
+                    <strong class="govuk-tag govuk-tag--{{ standard.status }} govuk-!-margin-left-2">
+                      {{ standard.status | upper }}
+                    </strong>
+                  </span>
+                </h2>
+              </div>
+              <div id="accordion-content-{{ standard.id }}" class="govuk-accordion__section-content" aria-labelledby="accordion-heading-{{ standard.id }}">
+                <div class="govuk-grid-row">
+                  <div class="govuk-grid-column-full">
+                    <h3 class="govuk-heading-s">Evidence</h3>
+                    <div class="govuk-inset-text">
+                      {{ standard.evidence | safe }}
+                    </div>
+                    
+                    <h3 class="govuk-heading-s">Detailed Assessment</h3>
+                    <div class="govuk-inset-text">
+                      {{ standard.commentary | safe }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      {# Statistics Section #}
+      <div id="statistics-section" class="assessment-section" hidden>
+        <h2 class="govuk-heading-l">RAG Status Summary</h2>
+        
+        {% set red = project.standards | selectattr("status", "equalto", "red") | list | length %}
+        {% set amber = project.standards | selectattr("status", "equalto", "amber") | list | length %}
+        {% set green = project.standards | selectattr("status", "equalto", "green") | list | length %}
+        
+        <div class="govuk-grid-row govuk-!-margin-bottom-6">
+          <div class="govuk-grid-column-one-third">
+            <div class="govuk-body large-number">{{ red }}</div>
+            <p class="govuk-body">Standards at Red</p>
+          </div>
+          <div class="govuk-grid-column-one-third">
+            <div class="govuk-body large-number">{{ amber }}</div>
+            <p class="govuk-body">Standards at Amber</p>
+          </div>
+          <div class="govuk-grid-column-one-third">
+            <div class="govuk-body large-number">{{ green }}</div>
+            <p class="govuk-body">Standards at Green</p>
+          </div>
+        </div>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+        <h3 class="govuk-heading-m">Progress Summary</h3>
+        <p class="govuk-body">{{ green }} out of {{ project.standards | length }} standards are meeting the required level.</p>
+        
+        {% if project.standards | selectattr("status", "ne", "green") | list | length > 0 %}
+          <h4 class="govuk-heading-s">Key areas for improvement:</h4>
+          <ul class="govuk-list govuk-list--bullet">
+            {% for standard in project.standards %}
+              {% if standard.status != 'green' %}
+                <li>{{ standard.name }}</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    </main>
+  </div>
+{% endblock %}
+
+{% block bodyEnd %}
+  <script type="module">
+    import { initAll } from '/govuk-frontend/dist/govuk/govuk-frontend-component.mjs'
+    
+    // Initialize all GOV.UK Frontend components
+    initAll()
+  </script>
+  {% block pageScripts %}
+    <script nonce="{{nonce}}">
+      document.querySelectorAll('.js-section-button').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('.assessment-section').forEach(section => {
+            section.hidden = true
+          })
+          document.getElementById(`${button.dataset.section}-section`).hidden = false
+        })
+      })
+    </script>
+  {% endblock %}
+{% endblock %} 

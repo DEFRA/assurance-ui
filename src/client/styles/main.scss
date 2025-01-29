@@ -1,0 +1,55 @@
+@import 'node_modules/govuk-frontend/dist/govuk/all';
+
+// RAG Status Tags
+.govuk-tag--red {
+  background-color: govuk-colour("red");
+}
+
+.govuk-tag--amber {
+  background-color: govuk-colour("orange");
+}
+
+.govuk-tag--green {
+  background-color: govuk-colour("green");
+}
+
+// Button Navigation
+.button-nav {
+  display: flex;
+  gap: govuk-spacing(2);
+  margin-bottom: govuk-spacing(6);
+
+  .govuk-button {
+    margin-bottom: 0;
+  }
+}
+
+// Layout Spacing
+.assessment-section {
+  display: block;
+  margin-top: govuk-spacing(6);
+  margin-bottom: govuk-spacing(6);
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.govuk-accordion__section-button .govuk-tag {
+  margin-left: govuk-spacing(2);
+}
+
+// Statistics Section
+.statistics-section {
+  .govuk-body {
+    &.large-number {
+      @include govuk-font($size: 48);
+      margin-bottom: govuk-spacing(1);
+    }
+  }
+}
+
+// Custom styles for the project status tags
+.project-status {
+  margin-left: govuk-spacing(2);
+} 
