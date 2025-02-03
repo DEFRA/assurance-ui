@@ -25,7 +25,7 @@ export const router = {
       await server.register([serveStaticFiles])
 
       // Project details route
-      await server.route({
+      server.route({
         method: 'GET',
         path: '/projects/{id}',
         handler: projectController.handler
