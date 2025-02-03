@@ -1,6 +1,5 @@
 /**
  * A GDS styled example home page controller.
- * Provided as an example, remove or modify as required.
  * @satisfies {Partial<ServerRoute>}
  */
 export const homeController = {
@@ -11,13 +10,13 @@ export const homeController = {
       projects: [
         {
           name: 'CDP Platform',
-          status: 'AMBER',
+          status: 'GREEN',
           lastUpdated: '15 March 2024',
           actions: 'View details'
         },
         {
           name: 'ELM Payment Services',
-          status: 'GREEN',
+          status: 'RED',
           lastUpdated: '10 March 2024',
           actions: 'View details'
         }
