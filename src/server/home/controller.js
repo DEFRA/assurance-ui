@@ -2,25 +2,22 @@
  * A GDS styled example home page controller.
  * @satisfies {Partial<ServerRoute>}
  */
+import { getProjects } from '../services/projects.js'
+
 export const homeController = {
-  handler: (request, h) => {
+  handler: async (request, h) => {
+    const projects = await getProjects()
+
     return h.view('home/index', {
       pageTitle: 'DDTS Technical Assurance Dashboard',
       heading: 'DDTS Technical Assurance Dashboard',
-      projects: [
-        {
-          name: 'CDP Platform',
-          status: 'GREEN',
-          lastUpdated: '15 March 2024',
-          actions: 'View details'
-        },
-        {
-          name: 'ELM Payment Services',
-          status: 'RED',
-          lastUpdated: '10 March 2024',
-          actions: 'View details'
-        }
-      ]
+      projects: projects.map((project) => ({
+        id: project.id,
+        name: project.name,
+        status: project.status,
+        lastUpdated: project.lastUpdated,
+        actions: 'View details'
+      }))
     })
   }
 }
