@@ -220,7 +220,7 @@ export const config = convict({
     baseUrl: {
       doc: 'Base URL for the API',
       format: String,
-      default: 'http://localhost:8085',
+      default: 'http://localhost:5000',
       env: 'API_BASE_URL'
     }
   }
