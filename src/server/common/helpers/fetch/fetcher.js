@@ -1,8 +1,9 @@
 import { fetch } from 'undici'
 import { createLogger } from '~/src/server/common/helpers/logging/logger.js'
+import { config } from '~/src/config/config.js'
 
 export function getApiUrl() {
-  return process.env.API_BASE_URL ?? 'http://localhost:5000'
+  return config.get('api.baseUrl')
 }
 
 async function fetcher(url, options = {}) {
