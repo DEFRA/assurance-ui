@@ -1,7 +1,19 @@
-import { pino } from 'pino'
+import pino from 'pino'
+import ecsFormat from '@elastic/ecs-pino-format'
 
-import { loggerOptions } from '~/src/server/common/helpers/logging/logger-options.js'
+export function createLogger(name = 'assurance-ui') {
+  const serviceVersion = process.env.SERVICE_VERSION ?? ''
+  const level = process.env.LOG_LEVEL ?? 'info'
 
-export function createLogger() {
-  return pino(loggerOptions)
+  return pino({
+    name,
+    level,
+    ...ecsFormat(), // Use Elastic Common Schema format
+    mixin: () => ({
+      'service.version': serviceVersion
+    }),
+    formatters: {
+      level: (label) => ({ log: { level: label } })
+    }
+  })
 }

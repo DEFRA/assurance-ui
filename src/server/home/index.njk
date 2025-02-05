@@ -34,7 +34,7 @@
               </td>
               <td class="govuk-table__cell">{{ project.lastUpdated }}</td>
               <td class="govuk-table__cell">
-                <a href="/projects/{{ project.name | lower | replace(" ", "-") }}" class="govuk-link">View details</a>
+                <a href="/projects/{{ project.id }}" class="govuk-link">{{ project.actions }}</a>
               </td>
             </tr>
           {% endfor %}
