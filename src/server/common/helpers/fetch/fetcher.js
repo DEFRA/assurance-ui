@@ -6,29 +6,43 @@ const logger = pino(loggerOptions)
 
 export function getApiUrl() {
   const apiUrl = config.get('api.baseUrl')
-  logger.info({ apiUrl }, 'API URL resolved')
+  logger.info({
+    '@timestamp': new Date().toISOString(),
+    message: 'API URL resolved',
+    http: {
+      url: {
+        path: apiUrl
+      }
+    }
+  })
   return apiUrl
 }
 
 async function fetcher(url, options = {}) {
   const fullUrl = url.startsWith('http') ? url : `${getApiUrl()}${url}`
 
-  logger.info(
-    {
-      fullUrl,
-      originalUrl: url,
-      baseApiUrl: getApiUrl(),
-      method: options?.method || 'get',
+  logger.info({
+    '@timestamp': new Date().toISOString(),
+    message: 'Attempting API request',
+    http: {
+      request: {
+        method: options?.method || 'get'
+      },
+      url: {
+        path: fullUrl
+      }
+    },
+    req: {
       headers: {
         ...options?.headers,
         'Content-Type': 'application/json'
-      },
-      timestamp: new Date().toISOString(),
-      service: config.get('serviceName'),
-      version: config.get('serviceVersion')
+      }
     },
-    'Attempting API request'
-  )
+    service: {
+      name: config.get('serviceName'),
+      version: config.get('serviceVersion')
+    }
+  })
 
   try {
     const response = await fetch(fullUrl, {
@@ -41,16 +55,22 @@ async function fetcher(url, options = {}) {
     })
 
     if (!response.ok) {
-      logger.info(
-        {
-          status: response.status,
-          statusText: response.statusText,
-          url: fullUrl,
-          responseHeaders: Object.fromEntries(response.headers.entries()),
-          requestHeaders: options.headers
+      logger.info({
+        '@timestamp': new Date().toISOString(),
+        message: 'API request failed with error response',
+        http: {
+          response: {
+            status_code: response.status
+          },
+          url: {
+            path: fullUrl
+          }
         },
-        'API request failed with error response'
-      )
+        res: {
+          statusCode: response.status,
+          headers: Object.fromEntries(response.headers.entries())
+        }
+      })
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
@@ -60,10 +80,20 @@ async function fetcher(url, options = {}) {
       const data = await response.json()
       logger.info(
         {
-          status: response.status,
-          url: fullUrl,
-          responseHeaders: Object.fromEntries(response.headers.entries()),
-          dataPreview: JSON.stringify(data).slice(0, 200) + '...'
+          '@timestamp': new Date().toISOString(),
+          message: 'API request successful with JSON response',
+          http: {
+            response: {
+              status_code: response.status
+            },
+            url: {
+              path: fullUrl
+            }
+          },
+          res: {
+            statusCode: response.status,
+            dataPreview: JSON.stringify(data).slice(0, 200) + '...'
+          }
         },
         'API request successful with JSON response'
       )
@@ -72,26 +102,42 @@ async function fetcher(url, options = {}) {
 
     logger.info(
       {
-        status: response.status,
-        url: fullUrl,
-        contentType
+        '@timestamp': new Date().toISOString(),
+        message: 'API request successful with non-JSON response',
+        http: {
+          response: {
+            status_code: response.status
+          },
+          url: {
+            path: fullUrl
+          }
+        },
+        res: {
+          statusCode: response.status,
+          contentType
+        }
       },
       'API request successful with non-JSON response'
     )
     return { ok: response.ok, status: response.status }
   } catch (error) {
-    logger.info(
-      {
-        error: error.message,
+    logger.info({
+      '@timestamp': new Date().toISOString(),
+      message: 'API request failed with exception',
+      error: {
+        message: error.message,
         stack: error.stack,
-        code: error.code,
-        url: fullUrl,
+        code: error.code
+      },
+      http: {
+        url: {
+          path: fullUrl
+        },
         baseApiUrl: getApiUrl(),
         nodeEnv: process.env.NODE_ENV,
         requestHeaders: options.headers
-      },
-      'API request failed with exception'
-    )
+      }
+    })
     throw error
   }
 }

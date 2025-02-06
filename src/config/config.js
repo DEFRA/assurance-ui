@@ -38,9 +38,10 @@ export const config = convict({
     env: 'STATIC_CACHE_TIMEOUT'
   },
   serviceName: {
-    doc: 'Applications Service Name',
+    doc: 'Name of service',
     format: String,
-    default: 'Technical Assurance'
+    default: 'assurance-ui',
+    env: 'SERVICE_NAME'
   },
   root: {
     doc: 'Project root',
@@ -180,7 +181,7 @@ export const config = convict({
     keyPrefix: {
       doc: 'Redis cache key prefix name used to isolate the cached results across multiple clients',
       format: String,
-      default: 'cdp-node-frontend-template:',
+      default: 'assurance-ui:',
       env: 'REDIS_KEY_PREFIX'
     },
     useSingleInstanceCache: {
