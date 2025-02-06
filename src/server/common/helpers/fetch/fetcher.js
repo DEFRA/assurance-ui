@@ -12,9 +12,8 @@ export function getApiUrl() {
 async function fetcher(url, options = {}) {
   const fullUrl = url.startsWith('http') ? url : `${getApiUrl()}${url}`
 
-
   logger.info(`Making ${options?.method || 'get'} request to ${fullUrl}`)
-  
+
   try {
     const response = await fetch(fullUrl, {
       ...options,
