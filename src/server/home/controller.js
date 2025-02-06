@@ -1,5 +1,3 @@
-import { ProxyAgent } from 'undici'
-
 import { config } from '~/src/config/config.js'
 
 /**
@@ -9,14 +7,14 @@ import { config } from '~/src/config/config.js'
 
 export const homeController = {
   handler: async (request, h) => {
-    const data = await fetch(`${config.get('api.baseUrl')}/projects`, {
-      dispatcher: new ProxyAgent(config.get('httpProxy'))
-    })
-      .then((response) => {
-        request.logger.info(response, 'Fetching projects')
-        return response.json()
-      })
-      .catch(request.logger.error)
+    let data
+    const response = await fetch(`${config.get('api.baseUrl')}/projects`)
+
+    if (response.ok) {
+      data = await response.json()
+    }
+
+    request.logger.info(response, 'Fetching projects from API')
 
     return h.view('home/index', {
       pageTitle: 'DDTS Technical Assurance Dashboard',
