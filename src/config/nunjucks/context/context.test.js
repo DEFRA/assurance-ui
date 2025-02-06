@@ -47,7 +47,7 @@ describe('#context', () => {
             url: '/about'
           }
         ],
-        serviceName: 'Technical Assurance',
+        serviceName: 'assurance-ui',
         serviceUrl: '/'
       })
     })
@@ -136,7 +136,7 @@ describe('#context cache', () => {
             url: '/about'
           }
         ],
-        serviceName: 'Technical Assurance',
+        serviceName: 'assurance-ui',
         serviceUrl: '/'
       })
     })
