@@ -7,29 +7,13 @@ const logger = pino(loggerOptions)
 
 export function getApiUrl() {
   const apiUrl = config.get('api.baseUrl')
-  logger.info({ apiUrl }, 'API URL resolved')
   return apiUrl
 }
 
 async function fetcher(url, options = {}) {
   const fullUrl = url.startsWith('http') ? url : `${getApiUrl()}${url}`
 
-  logger.info(
-    {
-      fullUrl,
-      originalUrl: url,
-      baseApiUrl: getApiUrl(),
-      method: options?.method || 'get',
-      headers: {
-        ...options?.headers,
-        'Content-Type': 'application/json'
-      },
-      timestamp: new Date().toISOString(),
-      service: config.get('serviceName'),
-      version: config.get('serviceVersion')
-    },
-    'Attempting API request'
-  )
+  logger.info(`Making ${options?.method || 'get'} request to ${fullUrl}`)
 
   try {
     const response = await fetch(fullUrl, {
@@ -42,57 +26,23 @@ async function fetcher(url, options = {}) {
     })
 
     if (!response.ok) {
-      logger.info(
-        {
-          status: response.status,
-          statusText: response.statusText,
-          url: fullUrl,
-          responseHeaders: Object.fromEntries(response.headers.entries()),
-          requestHeaders: options.headers
-        },
-        'API request failed with error response'
-      )
+      logger.error(`Request failed with status ${response.status}: ${fullUrl}`)
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 
-    // Only try to parse JSON if there's content
     const contentType = response.headers.get('content-type')
     if (contentType?.includes('application/json')) {
       const data = await response.json()
       logger.info(
-        {
-          status: response.status,
-          url: fullUrl,
-          responseHeaders: Object.fromEntries(response.headers.entries()),
-          dataPreview: JSON.stringify(data).slice(0, 200) + '...'
-        },
-        'API request successful with JSON response'
+        `Request succeeded with status ${response.status}: ${fullUrl}`
       )
       return { ok: response.ok, status: response.status, data }
     }
 
-    logger.info(
-      {
-        status: response.status,
-        url: fullUrl,
-        contentType
-      },
-      'API request successful with non-JSON response'
-    )
+    logger.info(`Request succeeded with status ${response.status}: ${fullUrl}`)
     return { ok: response.ok, status: response.status }
   } catch (error) {
-    logger.info(
-      {
-        error: error.message,
-        stack: error.stack,
-        code: error.code,
-        url: fullUrl,
-        baseApiUrl: getApiUrl(),
-        nodeEnv: process.env.NODE_ENV,
-        requestHeaders: options.headers
-      },
-      'API request failed with exception'
-    )
+    logger.error(`Request failed with error: ${error.message}, URL: ${fullUrl}`)
     throw error
   }
 }
