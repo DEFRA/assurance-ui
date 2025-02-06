@@ -1,3 +1,5 @@
+import { fetch as undiciFetch } from 'undici'
+
 import { config } from '~/src/config/config.js'
 
 /**
@@ -7,14 +9,12 @@ import { config } from '~/src/config/config.js'
 
 export const homeController = {
   handler: async (request, h) => {
-    let data
-    const response = await fetch(`${config.get('api.baseUrl')}/projects`)
-
-    if (response.ok) {
-      data = await response.json()
-    }
-
-    request.logger.info(response, 'Fetching projects from API')
+    const data = await undiciFetch(`${config.get('api.baseUrl')}/projects`)
+      .then((response) => {
+        request.logger.info(response, 'Fetching projects')
+        return response.json()
+      })
+      .catch(request.logger.error)
 
     return h.view('home/index', {
       pageTitle: 'DDTS Technical Assurance Dashboard',
