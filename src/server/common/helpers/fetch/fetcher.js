@@ -1,4 +1,3 @@
-import { fetch } from 'undici'
 import pino from 'pino'
 import { loggerOptions } from '~/src/server/common/helpers/logging/logger-options.js'
 import { config } from '~/src/config/config.js'
@@ -13,8 +12,9 @@ export function getApiUrl() {
 async function fetcher(url, options = {}) {
   const fullUrl = url.startsWith('http') ? url : `${getApiUrl()}${url}`
 
-  logger.info(`Making ${options?.method || 'get'} request to ${fullUrl}`)
 
+  logger.info(`Making ${options?.method || 'get'} request to ${fullUrl}`)
+  
   try {
     const response = await fetch(fullUrl, {
       ...options,
