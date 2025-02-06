@@ -13,7 +13,7 @@ async function fetcher(url, options = {}) {
   const logger = createLogger()
   const fullUrl = url.startsWith('http') ? url : `${getApiUrl()}${url}`
 
-  logger.debug(
+  logger.info(
     {
       fullUrl,
       originalUrl: url,
@@ -38,7 +38,7 @@ async function fetcher(url, options = {}) {
     })
 
     if (!response.ok) {
-      logger.error(
+      logger.info(
         {
           status: response.status,
           statusText: response.statusText,
@@ -55,7 +55,7 @@ async function fetcher(url, options = {}) {
     const contentType = response.headers.get('content-type')
     if (contentType?.includes('application/json')) {
       const data = await response.json()
-      logger.debug(
+      logger.info(
         {
           status: response.status,
           url: fullUrl,
@@ -67,7 +67,7 @@ async function fetcher(url, options = {}) {
       return { ok: response.ok, status: response.status, data }
     }
 
-    logger.debug(
+    logger.info(
       {
         status: response.status,
         url: fullUrl,
@@ -77,7 +77,7 @@ async function fetcher(url, options = {}) {
     )
     return { ok: response.ok, status: response.status }
   } catch (error) {
-    logger.error(
+    logger.info(
       {
         error: error.message,
         stack: error.stack,
