@@ -1,4 +1,3 @@
-import { fetch } from 'undici'
 import pino from 'pino'
 import { loggerOptions } from '~/src/server/common/helpers/logging/logger-options.js'
 import { config } from '~/src/config/config.js'
