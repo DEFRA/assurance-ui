@@ -1,3 +1,5 @@
+import { fetch } from 'undici'
+
 import { config } from '~/src/config/config.js'
 
 /**
