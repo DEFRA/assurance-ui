@@ -1,16 +1,17 @@
 import { fetch } from 'undici'
-import { createLogger } from '~/src/server/common/helpers/logging/logger.js'
+import pino from 'pino'
+import { loggerOptions } from '~/src/server/common/helpers/logging/logger-options.js'
 import { config } from '~/src/config/config.js'
+
+const logger = pino(loggerOptions)
 
 export function getApiUrl() {
   const apiUrl = config.get('api.baseUrl')
-  const logger = createLogger()
   logger.info({ apiUrl }, 'API URL resolved')
   return apiUrl
 }
 
 async function fetcher(url, options = {}) {
-  const logger = createLogger()
   const fullUrl = url.startsWith('http') ? url : `${getApiUrl()}${url}`
 
   logger.info(
@@ -22,7 +23,10 @@ async function fetcher(url, options = {}) {
       headers: {
         ...options?.headers,
         'Content-Type': 'application/json'
-      }
+      },
+      timestamp: new Date().toISOString(),
+      service: config.get('serviceName'),
+      version: config.get('serviceVersion')
     },
     'Attempting API request'
   )
